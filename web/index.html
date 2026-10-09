@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cómo ha cambiado el sonido de la música · Datos de Spotify</title>
+<meta name="description" content="Análisis de más de 26.000 canciones de Spotify: la música es más corta, menos alegre y más fuerte que hace 40 años. Python y visualización de datos.">
+<style>
+:root{--bg:#f7f8fa;--card:#fff;--ink:#17202a;--mute:#5d6b7a;--line:#e3e8ee;--a:#1f6fb2;--b:#e07a1f;--c:#7a8794;--bad:#c0392b;--ok:#1e8e5a}
+@media (prefers-color-scheme:dark){:root{--bg:#0f141a;--card:#171e26;--ink:#e8edf2;--mute:#9aa8b6;--line:#26313c;--a:#5aa9ec;--b:#f0a15a;--c:#7f8c99;--bad:#ef7a6c;--ok:#4cc38a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1080px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:clamp(1.6rem,4vw,2.3rem);line-height:1.2;margin:0 0 8px}h2{font-size:1.2rem;margin:0 0 4px}
+.lead{color:var(--mute);max-width:70ch;margin:0 0 24px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px}
+.kpi,.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.kpi b{display:block;font-size:1.8rem;line-height:1.1}.kpi span{color:var(--mute);font-size:.85rem}.kpi i{font-style:normal;font-size:.85rem}
+.up{color:var(--ok)}.down{color:var(--bad)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,480px),1fr));gap:16px;margin-bottom:16px}
+.card p{margin:0 0 10px;color:var(--mute);font-size:.92rem}
+svg{width:100%;height:auto;display:block}svg text{fill:var(--mute);font-size:11px;font-family:inherit}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;color:var(--mute);margin-top:6px}.legend span:before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;background:var(--col)}
+ul.find{padding-left:1.1em}ul.find li{margin:6px 0}
+table{border-collapse:collapse;width:100%;font-size:.9rem}th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right}th:first-child,td:first-child{text-align:left}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.tools span{border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-size:.85rem}
+.cap{border-left:3px solid var(--b);padding:2px 0 2px 12px;margin:8px 0 0;color:var(--ink);font-size:.95rem}.chap{margin-bottom:16px}.chap h2{font-size:1.35rem}.chap .kicker{color:var(--b);font-weight:700;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase}a{color:var(--a)}footer{color:var(--mute);font-size:.85rem;margin-top:32px}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>Cómo ha cambiado el sonido de la música en 50 años</h1>
+<p class="lead">Más de 26.000 canciones de Spotify, de 1970 a 2019, medidas con las características de audio de la propia plataforma. Cinco cosas que cuentan los datos, y lo que no pueden contar. Análisis de Mildrey Ruiz.</p>
+</header>
+<section class="kpis" id="kpis" aria-label="Indicadores clave"></section>
+
+<section class="card chap"><div class="kicker">1 · Duración</div><h2 id="h1"></h2><p>Mediana de la duración de las canciones, por periodos de cinco años.</p><div id="c1"></div><p class="cap" id="t1"></p></section>
+<section class="card chap"><div class="kicker">2 · Ánimo</div><h2 id="h2"></h2><p>Positividad media (de 0 a 1). Es una medida de Spotify sobre cómo suena la música, no sobre lo que dice la letra: más alta es más alegre y festiva.</p><div id="c2"></div><p class="cap" id="t2"></p></section>
+<section class="card chap"><div class="kicker">3 · Volumen</div><h2 id="h3"></h2><p>Volumen medio de las canciones, en decibelios (cuanto más cerca de 0, más fuerte).</p><div id="c3"></div><p class="cap" id="t3"></p></section>
+<section class="card chap"><div class="kicker">4 · Géneros</div><h2 id="h4"></h2><p>Positividad media y duración mediana por género de las listas de Spotify.</p><div id="c4"></div><p class="cap" id="t4"></p></section>
+<section class="card chap"><div class="kicker">5 · Éxito</div><h2 id="h5"></h2><p>Correlación (Spearman) de cada característica con la popularidad, en canciones de 2010 en adelante. Va de -1 a 1; cerca de 0 significa que casi no hay relación.</p><div id="c5"></div><p class="cap" id="t5"></p></section>
+
+<section class="card" style="margin-bottom:16px">
+<h2>Lo que estos datos no pueden decir</h2>
+<ul class="find" id="lim"></ul>
+</section>
+<section class="card">
+<h2>Cómo se hizo</h2>
+<p>Se partió de un CSV público de Spotify (TidyTuesday, enero de 2020) con 32.833 filas. Con Python y pandas se quitaron filas sin nombre, se unificaron las canciones repetidas en varias listas y las versiones duplicadas, y se revisaron las fechas. Después se calcularon medianas, medias por periodo y género, y correlaciones de Spearman. Un script comprueba que los totales cuadran antes de generar esta página.</p>
+<div class="tools"><span>Python · pandas</span><span>Estadística descriptiva</span><span>Correlación de Spearman</span><span>Visualización · SVG</span></div>
+<p>Fuente: <a href="https://github.com/rfordatascience/tidytuesday/tree/main/data/2020/2020-01-21">TidyTuesday 2020-01-21, canciones de Spotify</a> (datos obtenidos con el paquete spotifyr).</p>
+</section>
+<footer><span lang="en">English summary: an analysis of 26,000+ Spotify tracks (1970-2019) with Python. Songs got about a minute shorter since the late 1980s, sound less cheerful since 2010, and are much louder than in the 1970s. No single audio feature explains popularity (all correlations below 0.15). The data comes from playlists, so older songs are survivors, not a full sample.</span><br>Análisis y diseño: Mildrey Ruiz · <a href="https://mildreyruiz.com">mildreyruiz.com</a> · <a href="https://github.com/mildreyruiz-ai">GitHub</a></footer>
+</main>
+<script>
+const D={"periodos": [{"periodo": 1970, "etiqueta": "1970-74", "canciones": 297, "duracion_min": 4.134, "positividad": 0.611, "volumen_db": -10.194, "bailable": 0.528, "energia": 0.619, "acustica": 0.294}, {"periodo": 1975, "etiqueta": "1975-79", "canciones": 395, "duracion_min": 3.988, "positividad": 0.607, "volumen_db": -9.497, "bailable": 0.553, "energia": 0.636, "acustica": 0.223}, {"periodo": 1980, "etiqueta": "1980-84", "canciones": 389, "duracion_min": 4.191, "positividad": 0.631, "volumen_db": -8.662, "bailable": 0.592, "energia": 0.702, "acustica": 0.166}, {"periodo": 1985, "etiqueta": "1985-89", "canciones": 579, "duracion_min": 4.414, "positividad": 0.631, "volumen_db": -10.144, "bailable": 0.63, "energia": 0.68, "acustica": 0.158}, {"periodo": 1990, "etiqueta": "1990-94", "canciones": 815, "duracion_min": 4.361, "positividad": 0.6, "volumen_db": -9.506, "bailable": 0.662, "energia": 0.665, "acustica": 0.132}, {"periodo": 1995, "etiqueta": "1995-99", "canciones": 1019, "duracion_min": 4.341, "positividad": 0.594, "volumen_db": -7.816, "bailable": 0.674, "energia": 0.662, "acustica": 0.156}, {"periodo": 2000, "etiqueta": "2000-04", "canciones": 1209, "duracion_min": 4.08, "positividad": 0.595, "volumen_db": -6.711, "bailable": 0.663, "energia": 0.692, "acustica": 0.169}, {"periodo": 2005, "etiqueta": "2005-09", "canciones": 2061, "duracion_min": 3.923, "positividad": 0.595, "volumen_db": -6.668, "bailable": 0.635, "energia": 0.719, "acustica": 0.171}, {"periodo": 2010, "etiqueta": "2010-14", "canciones": 3566, "duracion_min": 3.911, "positividad": 0.499, "volumen_db": -6.152, "bailable": 0.63, "energia": 0.741, "acustica": 0.14}, {"periodo": 2015, "etiqueta": "2015-19", "canciones": 15157, "duracion_min": 3.36, "positividad": 0.466, "volumen_db": -6.496, "bailable": 0.667, "energia": 0.692, "acustica": 0.192}], "generos": [{"genero": "latin", "canciones": 3874, "duracion_min": 3.513, "positividad": 0.604, "bailable": 0.71, "energia": 0.707, "tempo": 113.363, "popularidad": 42.311}, {"genero": "r&b", "canciones": 4110, "duracion_min": 3.894, "positividad": 0.531, "bailable": 0.664, "energia": 0.585, "tempo": 108.52, "popularidad": 37.6}, {"genero": "rock", "canciones": 3775, "duracion_min": 3.932, "positividad": 0.526, "bailable": 0.518, "energia": 0.73, "tempo": 124.011, "popularidad": 41.873}, {"genero": "rap", "canciones": 5133, "duracion_min": 3.478, "positividad": 0.503, "bailable": 0.714, "energia": 0.648, "tempo": 120.015, "popularidad": 42.883}, {"genero": "pop", "canciones": 4704, "duracion_min": 3.514, "positividad": 0.498, "bailable": 0.636, "energia": 0.7, "tempo": 120.031, "popularidad": 46.84}, {"genero": "edm", "canciones": 4633, "duracion_min": 3.407, "positividad": 0.398, "bailable": 0.66, "energia": 0.809, "tempo": 127.77, "popularidad": 31.072}], "correlaciones": [{"variable": "Energía", "rho": -0.128}, {"variable": "Duración", "rho": -0.068}, {"variable": "Tempo", "rho": -0.021}, {"variable": "Parte hablada", "rho": 0.053}, {"variable": "Volumen", "rho": 0.06}, {"variable": "Positividad", "rho": 0.08}, {"variable": "Bailable", "rho": 0.088}, {"variable": "Acústica", "rho": 0.144}], "n_total": 26229, "n_tendencias": 25487, "n_corr": 17911, "anio_min": 1957, "anio_max": 2020, "sin_popularidad": 2264};
+const f1=n=>n.toLocaleString('es-ES',{minimumFractionDigits:1,maximumFractionDigits:1}),f2=n=>n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2}),fmt=n=>Math.round(n).toLocaleString('es-ES');
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const mmss=m=>{const s=Math.round(m*60);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+function svgWrap(w,h,inner,label){return `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${label}">${inner}</svg>`}
+function line(el,xs,ys,{w=720,h=260,color='--a',ymin,ymax,fmtv,label,note}){
+  const m={l:52,r:44,t:18,b:26},iw=w-m.l-m.r,ih=h-m.t-m.b;
+  const X=i=>m.l+iw*i/(xs.length-1),Y=v=>m.t+ih-ih*(v-ymin)/(ymax-ymin);let s='';
+  for(let i=0;i<=4;i++){const v=ymin+(ymax-ymin)*i/4,y=Y(v);s+=`<line x1="${m.l}" x2="${w-m.r}" y1="${y}" y2="${y}" stroke="${css('--line')}"/><text x="${m.l-6}" y="${y+4}" text-anchor="end">${fmtv(v)}</text>`}
+  xs.forEach((x,i)=>{s+=`<text x="${X(i)}" y="${h-6}" text-anchor="middle">${x.slice(2,4)==='70'||true?x.replace(/-\d+/,''):x}</text>`});
+  s+=`<path d="${ys.map((v,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)).join('')}" fill="none" stroke="${css(color)}" stroke-width="3" stroke-linejoin="round"/>`;
+  ys.forEach((v,i)=>{s+=`<circle cx="${X(i)}" cy="${Y(v)}" r="4" fill="${css(color)}"><title>${xs[i]}: ${fmtv(v)}</title></circle>`});
+  const lab=(i,dx,anchor)=>`<text x="${X(i)+dx}" y="${Y(ys[i])-10}" text-anchor="${anchor}" style="fill:${css('--ink')};font-weight:700;font-size:12px">${fmtv(ys[i])}</text>`;
+  s+=lab(0,0,'start')+lab(ys.length-1,8,'end');
+  el.innerHTML=svgWrap(w,h,s,label)}
+function hbars(el,data,{w=720,color='--a',fmtv,label,lw=130,min=0,max}){
+  const rh=28,h=data.length*rh+8;max=max??Math.max(...data.map(d=>Math.abs(d.v)));const iw=w-lw-70;let s='';
+  data.forEach((d,i)=>{const y=4+i*rh,bw=iw*Math.abs(d.v)/max;s+=`<text x="${lw-8}" y="${y+17}" text-anchor="end">${d.k}</text><rect x="${lw}" y="${y+4}" width="${bw}" height="${rh-9}" rx="2" fill="${css(d.c||color)}"><title>${d.k}: ${fmtv(d.v)}</title></rect><text x="${lw+bw+6}" y="${y+17}">${fmtv(d.v)}</text>`});
+  el.innerHTML=svgWrap(w,h,s,label)}
+const P=D.periodos,G=D.generos,C=D.correlaciones;
+const first=P[0],last=P[P.length-1],peak=P.reduce((a,b)=>b.duracion_min>a.duracion_min?b:a);
+const val0=P.slice(0,8).reduce((a,b)=>a+b.positividad,0)/8;
+document.getElementById('kpis').innerHTML=[
+[fmt(D.n_total),'canciones únicas analizadas',`<i>de ${D.anio_min} a ${D.anio_max}</i>`],
+[mmss(last.duracion_min),'duración mediana 2015-19',`<i class="down">${mmss(peak.duracion_min)} en ${peak.etiqueta}</i>`],
+[f2(last.positividad),'positividad media 2015-19',`<i class="down">${f2(val0)} de media hasta 2009</i>`],
+[f1(last.volumen_db)+' dB','volumen medio 2015-19',`<i>${f1(first.volumen_db)} dB en ${first.etiqueta}</i>`],
+[f2(Math.max(...C.map(c=>Math.abs(c.rho)))),'mayor correlación con la popularidad',`<i>relación muy débil</i>`]
+].map(k=>`<div class="kpi"><b>${k[0]}</b><span>${k[1]}</span><br>${k[2]}</div>`).join('');
+const set=(id,t)=>document.getElementById(id).textContent=t;
+const dmin=peak.duracion_min-last.duracion_min;
+set('h1',`Las canciones duran ${dmin>=1?'más de un minuto':'bastante'} menos que a finales de los 80`);
+line(document.getElementById('c1'),P.map(p=>p.etiqueta),P.map(p=>p.duracion_min),{ymin:3,ymax:4.6,fmtv:mmss,label:'Duración mediana por periodo'});
+set('t1',`La duración mediana pasó de ${mmss(peak.duracion_min)} en ${peak.etiqueta} a ${mmss(last.duracion_min)} en ${last.etiqueta}: ${Math.round((1-last.duracion_min/peak.duracion_min)*100)}% menos.`);
+const v10=P.find(p=>p.etiqueta==='2005-09'),v11=P.find(p=>p.etiqueta==='2010-14');
+set('h2','La música suena menos alegre desde 2010');
+line(document.getElementById('c2'),P.map(p=>p.etiqueta),P.map(p=>p.positividad),{color:'--b',ymin:0.4,ymax:0.7,fmtv:f2,label:'Positividad media por periodo'});
+set('t2',`La positividad se mantuvo entre ${f2(Math.min(...P.slice(0,8).map(p=>p.positividad)))} y ${f2(Math.max(...P.slice(0,8).map(p=>p.positividad)))} hasta 2009 y cayó a ${f2(v11.positividad)} en 2010-14 y ${f2(last.positividad)} en 2015-19.`);
+const vmin=P.reduce((a,b)=>b.volumen_db>a.volumen_db?b:a);
+set('h3','Hoy todo suena mucho más fuerte que en los años 70');
+line(document.getElementById('c3'),P.map(p=>p.etiqueta),P.map(p=>p.volumen_db),{ymin:-11,ymax:-5,fmtv:v=>f1(v)+' dB',label:'Volumen medio por periodo'});
+set('t3',`El volumen medio subió de ${f1(first.volumen_db)} dB en ${first.etiqueta} a ${f1(vmin.volumen_db)} dB en ${vmin.etiqueta}, el punto más alto. Desde entonces se estabiliza.`);
+const gp=[...G].sort((a,b)=>b.positividad-a.positividad);
+set('h4',`${gp[0].genero==='latin'?'El latino':gp[0].genero} es el género más alegre y ${gp[gp.length-1].genero.toUpperCase()} el menos`);
+hbars(document.getElementById('c4'),gp.map(g=>({k:g.genero.toUpperCase(),v:g.positividad})),{fmtv:f2,label:'Positividad por género',color:'--b'});
+const gd=[...G].sort((a,b)=>b.duracion_min-a.duracion_min);
+set('t4',`${gd[0].genero.toUpperCase()} y ${gd[1].genero.toUpperCase()} tienen las canciones más largas (${mmss(gd[0].duracion_min)} y ${mmss(gd[1].duracion_min)}); ${gd[gd.length-1].genero.toUpperCase()}, las más cortas (${mmss(gd[gd.length-1].duracion_min)}).`);
+set('h5','No hay una receta de sonido para el éxito');
+hbars(document.getElementById('c5'),C.map(c=>({k:c.variable,v:c.rho,c:c.rho<0?'--c':'--a'})),{fmtv:v=>(v>0?'+':'')+f2(v),label:'Correlación con la popularidad',max:0.5,lw:130});
+const topc=[...C].sort((a,b)=>Math.abs(b.rho)-Math.abs(a.rho))[0];
+set('t5',`La característica más ligada a la popularidad es "${topc.variable.toLowerCase()}" (${f2(topc.rho)}), una relación débil. El sonido por sí solo no explica qué canciones triunfan.`);
+document.getElementById('lim').innerHTML=[
+`Los datos vienen de listas de Spotify de 2019-2020. Las canciones antiguas que aparecen son las que aún se escuchan, y no una muestra de todo lo que se publicó. Por eso puede parecer que "antes la música era mejor": estamos viendo solo a los supervivientes.`,
+`${fmt(D.n_tendencias)} de las canciones analizadas caen entre 1970 y 2019, y más de la mitad son de 2015-19. Los periodos antiguos tienen pocas canciones (el primero, ${first.canciones}).`,
+`La positividad y el volumen los calcula Spotify con un algoritmo. Sirven para comparar, pero no son una verdad física.`,
+`Correlación no es causa. Que la música se acorte no dice por qué: pudo influir el streaming, los formatos o los hábitos de escucha, y estos datos no lo prueban.`,
+`${fmt(D.sin_popularidad)} canciones tienen popularidad 0 (probablemente sin datos); se excluyeron del cálculo de correlaciones.`
+].map(t=>`<li>${t}</li>`).join('');
+</script>
+</body>
+</html>

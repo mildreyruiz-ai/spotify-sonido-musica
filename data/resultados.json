@@ -1,0 +1,216 @@
+{
+ "periodos": [
+  {
+   "periodo": 1970,
+   "etiqueta": "1970-74",
+   "canciones": 297,
+   "duracion_min": 4.134,
+   "positividad": 0.611,
+   "volumen_db": -10.194,
+   "bailable": 0.528,
+   "energia": 0.619,
+   "acustica": 0.294
+  },
+  {
+   "periodo": 1975,
+   "etiqueta": "1975-79",
+   "canciones": 395,
+   "duracion_min": 3.988,
+   "positividad": 0.607,
+   "volumen_db": -9.497,
+   "bailable": 0.553,
+   "energia": 0.636,
+   "acustica": 0.223
+  },
+  {
+   "periodo": 1980,
+   "etiqueta": "1980-84",
+   "canciones": 389,
+   "duracion_min": 4.191,
+   "positividad": 0.631,
+   "volumen_db": -8.662,
+   "bailable": 0.592,
+   "energia": 0.702,
+   "acustica": 0.166
+  },
+  {
+   "periodo": 1985,
+   "etiqueta": "1985-89",
+   "canciones": 579,
+   "duracion_min": 4.414,
+   "positividad": 0.631,
+   "volumen_db": -10.144,
+   "bailable": 0.63,
+   "energia": 0.68,
+   "acustica": 0.158
+  },
+  {
+   "periodo": 1990,
+   "etiqueta": "1990-94",
+   "canciones": 815,
+   "duracion_min": 4.361,
+   "positividad": 0.6,
+   "volumen_db": -9.506,
+   "bailable": 0.662,
+   "energia": 0.665,
+   "acustica": 0.132
+  },
+  {
+   "periodo": 1995,
+   "etiqueta": "1995-99",
+   "canciones": 1019,
+   "duracion_min": 4.341,
+   "positividad": 0.594,
+   "volumen_db": -7.816,
+   "bailable": 0.674,
+   "energia": 0.662,
+   "acustica": 0.156
+  },
+  {
+   "periodo": 2000,
+   "etiqueta": "2000-04",
+   "canciones": 1209,
+   "duracion_min": 4.08,
+   "positividad": 0.595,
+   "volumen_db": -6.711,
+   "bailable": 0.663,
+   "energia": 0.692,
+   "acustica": 0.169
+  },
+  {
+   "periodo": 2005,
+   "etiqueta": "2005-09",
+   "canciones": 2061,
+   "duracion_min": 3.923,
+   "positividad": 0.595,
+   "volumen_db": -6.668,
+   "bailable": 0.635,
+   "energia": 0.719,
+   "acustica": 0.171
+  },
+  {
+   "periodo": 2010,
+   "etiqueta": "2010-14",
+   "canciones": 3566,
+   "duracion_min": 3.911,
+   "positividad": 0.499,
+   "volumen_db": -6.152,
+   "bailable": 0.63,
+   "energia": 0.741,
+   "acustica": 0.14
+  },
+  {
+   "periodo": 2015,
+   "etiqueta": "2015-19",
+   "canciones": 15157,
+   "duracion_min": 3.36,
+   "positividad": 0.466,
+   "volumen_db": -6.496,
+   "bailable": 0.667,
+   "energia": 0.692,
+   "acustica": 0.192
+  }
+ ],
+ "generos": [
+  {
+   "genero": "latin",
+   "canciones": 3874,
+   "duracion_min": 3.513,
+   "positividad": 0.604,
+   "bailable": 0.71,
+   "energia": 0.707,
+   "tempo": 113.363,
+   "popularidad": 42.311
+  },
+  {
+   "genero": "r&b",
+   "canciones": 4110,
+   "duracion_min": 3.894,
+   "positividad": 0.531,
+   "bailable": 0.664,
+   "energia": 0.585,
+   "tempo": 108.52,
+   "popularidad": 37.6
+  },
+  {
+   "genero": "rock",
+   "canciones": 3775,
+   "duracion_min": 3.932,
+   "positividad": 0.526,
+   "bailable": 0.518,
+   "energia": 0.73,
+   "tempo": 124.011,
+   "popularidad": 41.873
+  },
+  {
+   "genero": "rap",
+   "canciones": 5133,
+   "duracion_min": 3.478,
+   "positividad": 0.503,
+   "bailable": 0.714,
+   "energia": 0.648,
+   "tempo": 120.015,
+   "popularidad": 42.883
+  },
+  {
+   "genero": "pop",
+   "canciones": 4704,
+   "duracion_min": 3.514,
+   "positividad": 0.498,
+   "bailable": 0.636,
+   "energia": 0.7,
+   "tempo": 120.031,
+   "popularidad": 46.84
+  },
+  {
+   "genero": "edm",
+   "canciones": 4633,
+   "duracion_min": 3.407,
+   "positividad": 0.398,
+   "bailable": 0.66,
+   "energia": 0.809,
+   "tempo": 127.77,
+   "popularidad": 31.072
+  }
+ ],
+ "correlaciones": [
+  {
+   "variable": "Energía",
+   "rho": -0.128
+  },
+  {
+   "variable": "Duración",
+   "rho": -0.068
+  },
+  {
+   "variable": "Tempo",
+   "rho": -0.021
+  },
+  {
+   "variable": "Parte hablada",
+   "rho": 0.053
+  },
+  {
+   "variable": "Volumen",
+   "rho": 0.06
+  },
+  {
+   "variable": "Positividad",
+   "rho": 0.08
+  },
+  {
+   "variable": "Bailable",
+   "rho": 0.088
+  },
+  {
+   "variable": "Acústica",
+   "rho": 0.144
+  }
+ ],
+ "n_total": 26229,
+ "n_tendencias": 25487,
+ "n_corr": 17911,
+ "anio_min": 1957,
+ "anio_max": 2020,
+ "sin_popularidad": 2264
+}
